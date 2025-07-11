@@ -259,6 +259,11 @@ def register_ephemeral_op(features: OpFeatures):
         exir_ops.edge.aten.div.Tensor,
         exir_ops.edge.aten.div.Tensor_mode,
         exir_ops.edge.aten.pow.Tensor_Tensor,
+        exir_ops.edge.aten.eq.Tensor,
+        exir_ops.edge.aten.lt.Tensor,
+        exir_ops.edge.aten.le.Tensor,
+        exir_ops.edge.aten.gt.Tensor,
+        exir_ops.edge.aten.ge.Tensor,
     ]
 )
 def register_binary_op(features: OpFeatures):
@@ -652,6 +657,32 @@ def register_ported_ops_with_prepacking(features: OpFeatures):
         valid_packed_dims={PackedDim.CHANNELS},
     )
     features.handles_own_prepacking = True
+    return features
+
+
+@update_features(
+    [
+        exir_ops.edge.aten.native_group_norm.default,
+    ]
+)
+def register_native_group_norm(features: OpFeatures):
+    features.texture_impl = TextureImplFeatures(
+        valid_packed_dims={PackedDim.CHANNELS},
+    )
+    features.handles_own_prepacking = True
+
+    features.optimal_storage = [
+        VkStorageType.TEXTURE_3D,
+        VkStorageType.BUFFER,
+        VkStorageType.BUFFER,
+    ]
+
+    features.optimal_layout = [
+        VkMemoryLayout.TENSOR_CHANNELS_PACKED,
+        VkMemoryLayout.TENSOR_WIDTH_PACKED,
+        VkMemoryLayout.TENSOR_WIDTH_PACKED,
+    ]
+
     return features
 
 

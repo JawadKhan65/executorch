@@ -61,8 +61,10 @@ set_target_properties(fbjni PROPERTIES
 )
 
 set(executorch_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../lib/cmake/ExecuTorch)
+
 find_package(executorch CONFIG REQUIRED)
-# Note: target_link_options_shared_lib(prim_ops_lib) is now called automatically in executorch-config.cmake
+# target_link_options_shared_lib(executorch) is now handled by executorch-config.cmake
+
 
 add_library(executorch_jni SHARED jni/jni_layer.cpp jni/log.cpp jni/jni_layer_runtime.cpp)
 
@@ -113,7 +115,7 @@ endif()
 
 if(TARGET xnnpack_backend)
   target_link_options_shared_lib(xnnpack_backend)
-  list(APPEND link_libraries xnnpack_backend XNNPACK pthreadpool cpuinfo microkernels-prod)
+  list(APPEND link_libraries xnnpack_backend XNNPACK pthreadpool cpuinfo xnnpack-microkernels-prod)
 endif()
 
 if(TARGET vulkan_backend)
