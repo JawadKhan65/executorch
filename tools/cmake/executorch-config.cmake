@@ -53,9 +53,16 @@ foreach(lib ${required_lib_list})
 endforeach()
 
 # If we reach here, ET required libraries are found.
+target_link_libraries(executorch INTERFACE executorch_core)
+target_link_options_shared_lib(prim_ops_lib)
+
 set(EXECUTORCH_FOUND ON)
 
 target_link_libraries(executorch INTERFACE executorch_core)
+
+# ...existing code...
+
+# Move target_link_options_shared_lib(prim_ops_lib) to line 177 (after all target_link_libraries for executorch)
 target_link_options_shared_lib(prim_ops_lib)
 
 set(lib_list
@@ -173,6 +180,9 @@ if(TARGET extension_threadpool)
                                     "cpuinfo;pthreadpool"
   )
 endif()
+
+# target_link_options_shared_lib(prim_ops_lib) is now called automatically in executorch-config.cmake
+target_link_options_shared_lib(prim_ops_lib)
 
 set(shared_lib_list
   # executorch -- size tests fail due to regression if we include this and I'm not sure it's needed.
